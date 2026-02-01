@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Spin the Wheel & Win!</title>
+
+    <style>
+
+        /* --- General Styling & Festive Theme --- */
+
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap');
+
+        :root {
+
+            --glow-color: #ff00de;
+
+            --primary-color: #9d00ff;
+
+            --secondary-color: #5800ff;
+
+            --text-color: #ffffff;
+
+            --bg-color-start: #1a022b;
+
+            --bg-color-end: #0b0014;
+
+        }
+
+        * {
+
+            margin: 0;
+
+            padding: 0;
+
+            box-sizing: border-box;
+
+        }
+
+        body {
+
+            font-family: 'Poppins', sans-serif;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            min-height: 100vh;
+
+            background: linear-gradient(135deg, var(--bg-color-start), var(--bg-color-end));
+
+            color: var(--text-color);
+
+            text-align: center;
+
+            overflow-x: hidden;
+
+            padding: 20px;
+
+        }
+
+        .container {
+
+            width: 100%;
+
+            max-width: 450px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            gap: 25px;
+
+        }
+
+        /* --- Header --- */
+
+        h1 {
+
+            font-size: 2rem;
+
+            text-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--glow-color);
+
+            animation: pulse-text 2s infinite;
+
+        }
+
+        /* --- Wheel Section --- */
+
+        .wheel-container {
+
+            position: relative;
+
+            width: 100%;
+
+            max-width: 350px;
+
+            aspect-ratio: 1 / 1;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+        }
+
+        #wheel {
+
+            width: 100%;
+
+            height: 100%;
+
+            transition: transform 5s cubic-bezier(0.25, 0.1, 0.25, 1);
+
+        }
+
+        
+
+        #center-button {
+
+            position: absolute;
+
+            top: 50%;
+
+            left: 50%;
+
+            transform: translate(-50%, -50%);
+
+            width: 25%;
+
+            height: auto;
+
+            z-index: 5;
+
+            pointer-events: none;
+
+        }
+
+        .pointer {
+
+            position: absolute;
+
+            top: -10px;
+
+            left: 50%;
+
+            transform: translateX(-50%);
+
+            width: 0;
+
+            height: 0;
+
+            border-left: 20px solid transparent;
+
+            border-right: 20px solid transparent;
+
+            border-top: 40px solid #ffeb3b;
+
+            z-index: 10;
+
+            filter: drop-shadow(0 -2px 5px rgba(0,0,0,0.5));
+
+        }
+
+        /* --- Buttons Styling (Glowing & Animated) --- */
+
+        .glowing-btn {
+
+            padding: 15px 30px;
+
+            border: none;
+
+            outline: none;
+
+            color: var(--text-color);
+
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+
+            cursor: pointer;
+
+            position: relative;
+
+            z-index: 0;
+
+            border-radius: 10px;
+
+            font-size: 1.2rem;
+
+            font-weight: 700;
+
+            text-transform: uppercase;
+
+            box-shadow: 0 0 5px var(--glow-color), 0 0 15px var(--glow-color);
+
+            transition: all 0.3s ease;
+
+            width: 100%;
+
+            max-width: 350px;
+
+            text-decoration: none; /* For <a> tag */
+
+            display: inline-block; /* For <a> tag */
+
+        }
+
+        
+
+        .glowing-btn:before {
+
+            content: '';
+
+            background: linear-gradient(45deg, #ff00c8, #ff6a00, #ff0055, #9d00ff, #5800ff, #ff00c8);
+
+            position: absolute;
+
+            top: -2px; left: -2px;
+
+            background-size: 400%;
+
+            z-index: -1;
+
+            filter: blur(5px);
+
+            width: calc(100% + 4px);
+
+            height: calc(100% + 4px);
+
+            animation: glowing 20s linear infinite;
+
+            opacity: 1;
+
+            border-radius: 10px;
+
+        }
+
+        .glowing-btn:hover {
+
+            transform: scale(1.05);
+
+            box-shadow: 0 0 15px var(--glow-color), 0 0 30px var(--glow-color);
+
+        }
+
+        .glowing-btn:active {
+
+            transform: scale(0.95);
+
+        }
+
+        .glowing-btn:disabled {
+
+            cursor: not-allowed;
+
+            opacity: 0.6;
+
+            box-shadow: none;
+
+        }
+
+        .glowing-btn:disabled:before {
+
+            display: none;
+
+        }
+
+        /* --- Claim Section --- */
+
+        #claim-section {
+
+            display: none; /* Initially hidden */
+
+            flex-direction: column;
+
+            align-items: center;
+
+            gap: 20px;
+
+            width: 100%;
+
+            padding: 25px;
+
+            background: rgba(255, 255, 255, 0.05);
+
+            border-radius: 15px;
+
+            backdrop-filter: blur(10px);
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+        }
+
+        
+
+        #claim-section h2 {
+
+            font-size: 1.6rem;
+
+        }
+
+        #prize-name {
+
+            font-size: 1.8rem;
+
+            color: #ffeb3b;
+
+            font-weight: 700;
+
+            display: block; /* Ensures it takes its own line */
+
+            margin-top: 5px;
+
+        }
+
+        
+
+        #claim-section p {
+
+            font-size: 1.1rem;
+
+            line-height: 1.5;
+
+            color: #ddd;
+
+        }
+
+        #whatsapp-share-btn {
+
+            background: #25D366;
+
+            box-shadow: 0 0 10px #25D366;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 10px;
+
+            margin-top: 10px;
+
+        }
+
+        
+
+        #whatsapp-share-btn:before {
+
+            background: linear-gradient(45deg, #128C7E, #25D366, #DCF8C6, #128C7E);
+
+            background-size: 400%;
+
+        }
+
+        /* --- Form Styling --- */
+
+        #claim-form {
+
+            width: 100%;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 15px;
+
+            align-items: center;
+
+        }
+
+        
+
+        .form-group {
+
+            width: 100%;
+
+            max-width: 350px;
+
+        }
+
+        .form-group input {
+
+            width: 100%;
+
+            padding: 12px;
+
+            border-radius: 8px;
+
+            border: 2px solid var(--primary-color);
+
+            background-color: rgba(0, 0, 0, 0.3);
+
+            color: var(--text-color);
+
+            font-size: 1rem;
+
+            font-family: 'Poppins', sans-serif;
+
+        }
+
+        .form-group input::placeholder {
+
+            color: #aaa;
+
+        }
+
+        .form-group input:focus {
+
+            outline: none;
+
+            box-shadow: 0 0 10px var(--glow-color);
+
+        }
+
+        
+
+        #success-message {
+
+            display: none;
+
+        }
+
+        
+
+        /* Ad container styling */
+
+        .ad-container {
+
+            width: 320px;
+
+            height: 50px;
+
+            /* Spacing is handled by parent container's gap */
+
+        }
+
+        /* --- Animation Keyframes --- */
+
+        @keyframes glowing {
+
+            0% { background-position: 0 0; }
+
+            50% { background-position: 400% 0; }
+
+            100% { background-position: 0 0; }
+
+        }
+
+        @keyframes pulse-text {
+
+            0%, 100% { text-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--glow-color); }
+
+            50% { text-shadow: 0 0 20px #ff5db2, 0 0 40px #ff5db2; }
+
+        }
+
+        /* --- Mobile Responsiveness --- */
+
+        @media (max-width: 480px) {
+
+            h1 { font-size: 1.5rem; }
+
+            .glowing-btn { font-size: 1rem; padding: 12px 24px; }
+
+            #claim-section h2 { font-size: 1.4rem; }
+
+            #prize-name { font-size: 1.5rem; }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+    
+
+        <!-- ================= ADVERTISEMENT 1 (TOP) ================= -->
+
+        <div class="ad-container">
+
+            <script type="text/javascript">
+
+                atOptions = {
+
+                    'key' : 'f2d94bf6cfd481123698146d22ba19fa',
+
+                    'format' : 'iframe',
+
+                    'height' : 50,
+
+                    'width' : 320,
+
+                    'params' : {}
+
+                };
+
+            </script>
+
+            <script type="text/javascript" src="//www.highperformanceformat.com/f2d94bf6cfd481123698146d22ba19fa/invoke.js"></script>
+
+        </div>
+
+        <!-- ======================================================== -->
+
+        <h1>Spin the Wheel & Win a Guaranteed Prize!</h1>
+
+        <div class="wheel-container">
+
+            <div class="pointer"></div>
+
+            <img src="spin.png" alt="Spin Wheel" id="wheel">
+
+            <img src="button.png" alt="Center Button" id="center-button">
+
+        </div>
+
+        <button id="spin-btn" class="glowing-btn">SPIN NOW</button>
+
+        <!-- Claim Section (Form aur Share button ek saath) -->
+
+        <div id="claim-section">
+
+            <h2>Congratulations! You won<span id="prize-name"></span></h2>
+
+            <p>To claim this prize, fill your details and share with your 10 friends.</p>
+
+            
+
+            <form id="claim-form">
+
+                <div class="form-group">
+
+                    <input type="text" id="name" placeholder="Enter Your Name" required>
+
+                </div>
+
+                <div class="form-group">
+
+                    <input type="tel" id="mobile" placeholder="Enter Your Mobile Number" required pattern="[0-9]{10}">
+
+                </div>
+
+                <button type="button" id="whatsapp-share-btn" class="glowing-btn">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#FFFFFF"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M.04 12.13c0 6.69 5.44 12.13 12.13 12.13 2.14 0 4.14-.56 5.86-1.55l3.41.9-1.03-3.23c1.1-1.72 1.76-3.8 1.76-6.01 0-6.69-5.44-12.13-12.13-12.13S.04 5.44.04 12.13zm6.65 5.25c-.12-.21-.24-.42-.39-.63-.2-.27-.42-.51-.66-.75-.3-.3-.63-.57-.96-.78-.29-.18-.56-.3-.76-.37-.24-.09-.43-.12-.56-.12-.12 0-.25.01-.39.04-.13.03-.27.09-.42.18-.15.09-.28.19-.39.29s-.19.19-.24.27c-.05.08-.09.16-.09.21 0 .09.03.2.12.33.09.14.2.28.33.45.13.17.28.35.45.55.17.2.35.4.55.63.2.23.42.46.66.72.24.26.49.52.76.78.27.26.56.52.86.78.3.26.62.51.96.75.34.24.69.46 1.05.66.36.2.73.38 1.11.51.38.13.76.2 1.14.2.51 0 .99-.08 1.44-.24.45-.16.88-.38 1.28-.66.4-.28.76-.61 1.08-1 .32-.39.58-.82.78-1.28.08-.18.12-.33.12-.45 0-.12-.03-.24-.09-.33-.06-.09-.15-.18-.27-.27-.12-.09-.24-.15-.39-.18-.15-.03-.3-.04-.45-.04-.12 0-.27.01-.42.04-.15.03-.3.09-.45.18-.15.09-.28.19-.39.29s-.19.19-.24.27c-.05.08-.09.16-.09.21 0 .06.02.13.06.21.19.33.42.63.69.88.27.25.53.45.78.6s.46.24.66.27c.2.03.39.01.54-.03.18-.06.36-.15.54-.3.18-.15.33-.3.45-.45.12-.15.21-.3.27-.42.06-.12.09-.24.09-.33 0-.21-.06-.42-.18-.6-.12-.18-.29-.35-.48-.48-.2-.14-.42-.26-.66-.35-.24-.09-.5-.15-.76-.18-.26-.03-.54-.03-.81 0-.3.03-.59.09-.87.18-.28.09-.54.21-.78.33-.24.12-.48.27-.69.42-.21.15-.42.33-.6.51-.18.18-.35.39-.48.6-.14.21-.24.42-.3.63s-.09.4-.09.57.01.33.04.48c.03.15.09.28.18.39.09.11.19.21.3.27.11.06.21.09.3.09.14 0 .28-.03.42-.09.14-.06.27-.15.39-.27.12-.12.23-.26.33-.42.1-.16.18-.33.24-.51.06-.18.09-.36.09-.54 0-.05-.01-.1-.02-.15z"/></svg>
+
+                    Share on WhatsApp
+
+                </button>
+
+                
+
+                <button type="submit" class="glowing-btn">Claim My Prize</button>
+
+            </form>
+
+        </div>
+
+        <!-- Final Success Message -->
+
+        <div id="success-message">
+
+             <h2>Your prize claim has been submitted successfully!</h2>
+
+             <p>Congratulations again! You will be contacted soon.</p>
+
+        </div>
+
+        <!-- ================= ADVERTISEMENT 2 (BOTTOM) ================= -->
+
+        <div class="ad-container">
+
+            <script type="text/javascript">
+
+                atOptions = {
+
+                    'key' : 'f2d94bf6cfd481123698146d22ba19fa',
+
+                    'format' : 'iframe',
+
+                    'height' : 50,
+
+                    'width' : 320,
+
+                    'params' : {}
+
+                };
+
+            </script>
+
+            <script type="text/javascript" src="//www.highperformanceformat.com/f2d94bf6cfd481123698146d22ba19fa/invoke.js"></script>
+
+        </div>
+
+        <!-- ========================================================== -->
+
+    </div>
+
+    <!-- Confetti CDN -->
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+
+        const wheel = document.getElementById('wheel');
+
+        const spinBtn = document.getElementById('spin-btn');
+
+        const prizeNameSpan = document.getElementById('prize-name');
+
+        const whatsappBtn = document.getElementById('whatsapp-share-btn');
+
+        const claimForm = document.getElementById('claim-form');
+
+        const successMessage = document.getElementById('success-message');
+
+        const claimSection = document.getElementById('claim-section');
+
+        const nameInput = document.getElementById('name');
+
+        const prizes = [
+
+            "₹100 PayTM Cash", "Movie Ticket", "iPhone 14", 
+
+            "Samsung TV", "Smartwatch", "Bluetooth Speaker", 
+
+            "AirPods", "Better Luck Next Time", "Amazon Voucher ₹50", 
+
+            "Free Coffee Coupon", "20% Discount Voucher", "Surprise Gift Box"
+
+        ];
+
+        
+
+        const winningPrizes = prizes.filter(p => p !== "Better Luck Next Time");
+
+        const segmentAngle = 360 / prizes.length;
+
+        let isSpinning = false;
+
+        let currentWonPrize = '';
+
+        spinBtn.addEventListener('click', () => {
+
+            if (isSpinning) return;
+
+            isSpinning = true;
+
+            spinBtn.disabled = true;
+
+            const winningPrizeIndex = Math.floor(Math.random() * winningPrizes.length);
+
+            const wonPrize = winningPrizes[winningPrizeIndex];
+
+            const targetPrizeIndex = prizes.indexOf(wonPrize);
+
+            const randomRotations = Math.floor(Math.random() * 5) + 5;
+
+            const targetAngle = (randomRotations * 360) + (360 - (targetPrizeIndex * segmentAngle));
+
+            
+
+            const offset = (Math.random() - 0.5) * (segmentAngle * 0.8);
+
+            const finalAngle = targetAngle + offset;
+
+            
+
+            wheel.style.transform = `rotate(${finalAngle}deg)`;
+
+            setTimeout(() => {
+
+                isSpinning = false;
+
+                showResult(wonPrize);
+
+            }, 5500);
+
+        });
+
+        
+
+        function showResult(prize) {
+
+            currentWonPrize = prize;
+
+            prizeNameSpan.textContent = prize;
+
+            spinBtn.style.display = 'none';
+
+            claimSection.style.display = 'flex';
+
+            
+
+            confetti({
+
+                particleCount: 150,
+
+                spread: 90,
+
+                origin: { y: 0.6 }
+
+            });
+
+        }
+
+        
+
+        whatsappBtn.addEventListener('click', () => {
+
+            const name = nameInput.value.trim();
+
+            const prize = currentWonPrize;
+
+            if (name === '') {
+
+                alert('Please enter your name first to share!');
+
+                return;
+
+            }
+
+            const websiteLink = "https://your-website-link.com"; // Yahan apni website ka link daalein
+
+            const prefilledText = `🎉 My name is ${name}, and I just won a ${prize} !🎁 You should try your luck too!${http://eranwithspin.xo.je}`;
+
+            
+
+            const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(prefilledText)}`;
+
+            window.open(whatsappUrl, '_blank');
+
+        });
+
+        claimForm.addEventListener('submit', (e) => {
+
+            e.preventDefault();
+
+            
+
+            const name = document.getElementById('name').value;
+
+            const mobile = document.getElementById('mobile').value;
+
+            if (name.trim() && mobile.trim()) {
+
+                claimSection.style.display = 'none';
+
+                successMessage.style.display = 'block';
+
+                 // Dono ad containers ko bhi hide kar sakte hain agar chahein
+
+                document.querySelectorAll('.ad-container').forEach(ad => ad.style.display = 'none');
+
+            } else {
+
+                alert("Please fill in both your name and mobile number.");
+
+            }
+
+        });
+
+    </script>
+
+</body>
+
+</html>
